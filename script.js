@@ -1,11 +1,12 @@
 $(document).ready(function() {
-    // Load team number from cookie if it exists
+    // Load team number and event from cookies if they exist
     var teamNumber = getCookie('teamNumber');
+    var eventName = getCookie('eventName');
     console.log('Team number:', teamNumber);
     if (teamNumber) {
         $('#teamNumberInput').val(teamNumber);
         $('#teamnum').text(teamNumber);
-        fetchTeamEvents(teamNumber);
+        fetchTeamEvents(teamNumber, eventName);
     }
 
     $('#settings').click(function() {
@@ -19,11 +20,18 @@ $(document).ready(function() {
         fetchTeamEvents(teamNumber);
     });
 
+    $('#eventDropdown').on('change', function() {
+        var eventName = $(this).find('option:selected').text();
+        $('#eventname').text(eventName);
+        setCookie('eventName', eventName, 365);
+        scaleHeaderText();
+    });
+
     $('#closeSettings').click(function() {
         $('#settingsPage').hide();
     });
 
-    function fetchTeamEvents(teamNumber) {
+    function fetchTeamEvents(teamNumber, selectedEventName) {
         var currentYear = new Date().getFullYear();
         var apiUrl = `https://api.statbotics.io/v3/team_events?team=${teamNumber}&year=${currentYear}`;
         
@@ -32,7 +40,12 @@ $(document).ready(function() {
             eventDropdown.empty();
             eventDropdown.append(new Option('Select an event', '', true, true));
             data.forEach(function(event) {
-                eventDropdown.append(new Option(event.event_name, event.event));
+                var option = new Option(event.event_name, event.event);
+                if (event.event_name === selectedEventName) {
+                    option.selected = true;
+                    $('#eventname').text(event.event_name);
+                }
+                eventDropdown.append(option);
             });
         }).fail(function(jqXHR, textStatus, errorThrown) {
             console.error('Error fetching team events:', textStatus, errorThrown);
@@ -59,4 +72,20 @@ $(document).ready(function() {
         }
         return null;
     }
+
+    function scaleHeaderText() {
+        var header = $('#header');
+        var headerText = header.find('h2');
+        headerText.css('font-size', ''); // Reset font size
+        headerText.each(function() {
+            var $this = $(this);
+            while ($this[0].scrollWidth > $this.innerWidth()) {
+                var fontSize = parseInt($this.css('font-size')) - 1;
+                $this.css('font-size', fontSize + 'px');
+            }
+        });
+    }
+
+    scaleHeaderText();
+    $(window).resize(scaleHeaderText);
 });

@@ -2,6 +2,7 @@ $(document).ready(function() {
     // Load team number and event from cookies if they exist
     var teamNumber = getCookie('teamNumber');
     var eventName = getCookie('eventName');
+    
     console.log('Team number:', teamNumber);
     if (teamNumber) {
         $('#teamNumberInput').val(teamNumber);

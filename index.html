@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container" id="header">
+        <h2 id="teamnum">####</h2>
+        <h2 id="eventname">Open Settings Menu</h2>
+        <h2 id="settings">&#9881;</h2>
+    </div>
+    <div id="settingsPage">
+        <button id="closeSettings">&#10006;</button>
+        <h2>Settings</h2>
+        <label for="teamNumberInput">Team Number:</label>
+        <input type="number" id="teamNumberInput" name="teamNumberInput">
+        <label for="eventDropdown">Select Event:</label>
+        <select id="eventDropdown" name="eventDropdown">
+            <option value="" disabled selected>Select an event</option>
+        </select>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

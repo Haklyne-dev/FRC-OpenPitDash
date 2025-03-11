@@ -6,6 +6,8 @@ $(document).ready(function() {
     var tbaApiKey = getCookie('tbaApiKey');
     var eventKey = null;
     var intervalId = null;
+    var savedMatchData = {};
+    var currentMatch = 'No upcoming match';
     
     console.log('Team number:', teamNumber);
     if (teamNumber) {
@@ -41,13 +43,13 @@ $(document).ready(function() {
         teamNumber = $('#teamNumberInput').val();
         $('#eventname').text(eventName);
         setCookie('eventName', eventName, 365);
-        fetchMatches("demo9369", nexusApiKey, teamNumber);
+        fetchMatches(eventKey, nexusApiKey, teamNumber);
         scaleHeaderText();
         if (intervalId) {
             clearInterval(intervalId);
         }
         intervalId = setInterval(function() {
-            fetchMatches("demo9369", nexusApiKey, teamNumber);
+            fetchMatches(eventKey, nexusApiKey, teamNumber);
         }, 15000);
     });
 
@@ -97,6 +99,7 @@ $(document).ready(function() {
                 'Nexus-Api-Key': apiKey
             },
             success: function(data) {
+                savedMatchData = data; // Save the fetched data
                 var matchesList = $('#matches');
                 matchesList.empty();
                 var isQueuing = false;
@@ -147,28 +150,83 @@ $(document).ready(function() {
         var currentYear = new Date().getFullYear();
         var redAlliance = match.redTeams;
         var blueAlliance = match.blueTeams;
+        currentMatch = match.label;
 
         redAlliance.forEach(function(team, index) {
-            fetchTeamMedia(team, currentYear, `#redTeam${index + 1}`);
+            fetchTeamMedia(team, currentYear, `#redTeam${index + 1}`, 'red');
         });
 
         blueAlliance.forEach(function(team, index) {
-            fetchTeamMedia(team, currentYear, `#blueTeam${index + 1}`);
+            fetchTeamMedia(team, currentYear, `#blueTeam${index + 1}`, 'blue');
+        });
+
+        // Highlight the current match in the matches list
+        $('.match').each(function() {
+            var matchLabel = $(this).find('h3').text();
+            if (matchLabel === currentMatch) {
+                $(this).addClass('highlight-current');
+            } else {
+                $(this).removeClass('highlight-current');
+            }
         });
     }
 
-    function fetchTeamMedia(teamNumber, year, elementId) {
-        var apiUrl = `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/media/${year}`;
-        
+    function fetchTeamMedia(teamNumber, year, elementId, allianceColor) {
+        var mediaApiUrl = `https://www.thebluealliance.com/api/v3/team/frc${teamNumber}/media/${year}`;
+        var teamApiUrl = `https://api.statbotics.io/v3/team/${teamNumber}`;
+
         $.ajax({
-            url: apiUrl,
+            url: mediaApiUrl,
             method: 'GET',
             headers: {
                 'X-TBA-Auth-Key': tbaApiKey
             },
-            success: function(data) {
-                var mediaUrl = data.length > 0 ? data[0].direct_url : 'default_image.png';
-                $(elementId).html(`<img src="${mediaUrl}" alt="Team ${teamNumber}"><span>${teamNumber}</span>`);
+            success: function(mediaData) {
+                var mediaUrl = 'default.png';
+                for (var i = 0; i < mediaData.length; i++) {
+                    if (mediaData[i].preferred) {
+                        mediaUrl = mediaData[i].direct_url;
+                        break;
+                    }
+                }
+
+                $.getJSON(teamApiUrl, function(teamData) {
+                    var teamName = teamData.name || `Team ${teamNumber}`;
+                    var nextMatch = 'No upcoming match';
+
+                    // Find the next match from the saved data
+                    if (savedMatchData.matches) {
+                        for (var i = 0; i < savedMatchData.matches.length; i++) {
+                            var match = savedMatchData.matches[i];
+                            if ((match.redTeams.includes(teamNumber) || match.blueTeams.includes(teamNumber)) && match.status !== "On field") {
+                                nextMatch = "Next Match: "+match.label;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Check if the next match is the same as the currently displayed one
+                    if (nextMatch === "Next Match: "+currentMatch) {
+                        nextMatch = '<br>';
+                    }
+
+                    $(elementId).html(`
+                        <div class="team-card ${allianceColor}">
+                            <span class="team-number">${teamNumber}</span>
+                            <span class="team-name">${teamName}</span>
+                            <img src="${mediaUrl}" alt="Team ${teamNumber}">
+                            <span class="next-match">${nextMatch}</span>
+                        </div>
+                    `);
+                }).fail(function() {
+                    $(elementId).html(`
+                        <div class="team-card ${allianceColor}">
+                            <span class="team-number">${teamNumber}</span>
+                            <img src="${mediaUrl}" alt="Team ${teamNumber}">
+                            <span class="next-match">Next Match: No upcoming match</span>
+                        </div>
+                    `);
+                });
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error fetching team media:', textStatus, errorThrown);
@@ -215,11 +273,11 @@ $(document).ready(function() {
             'border': '1px solid #ccc'
         });
         $('.red-alliance').css({
-            'color': 'black',
+            'color': 'white',
             'font-weight': 'bold'
         });
         $('.blue-alliance').css({
-            'color': 'black',
+            'color': 'white',
             'font-weight': 'bold'
         });
     }

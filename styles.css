@@ -1,3 +1,55 @@
+#main {
+    display: flex;
+    margin-top: 40px;
+}
+
+#matches-container {
+    flex: 0 0 300px;
+    padding: 10px;
+}
+
+#details-container {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.team-card {
+    display: inline-block;
+    text-align: center;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    color: white;
+}
+
+.team-card.red {
+    background-color: red;
+}
+
+.team-card.blue {
+    background-color: blue;
+}
+
+.team-number {
+    display: block;
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.team-name {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.next-match {
+    display: block;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
 body {
     color: white;
     font-family: sans-serif;
@@ -40,7 +92,11 @@ body {
 }
 
 #nexusApiKey {
-    width: 300px;
+    width: 500px;
+}
+
+#tbaApiKey {
+    width: 500px;
 }
 
 #teamnum, #eventname, #settings {
@@ -99,7 +155,7 @@ body {
 }
 
 #eventDropdown {
-    width: 250px;
+    width: 500px;
 }
 
 #matchesList {
@@ -111,7 +167,8 @@ body {
     padding: 0;
     margin: 0;
     left: 0;
-    top: 0;
+    top: 75;
+    position:absolute
 }
 
 .match {
@@ -124,13 +181,13 @@ body {
 
 .match h3 {
     grid-row: span 2;
-    color: black;
+    color: white;
     width: 100%;
     margin-left: 5px;
 }
 
 .red-alliance, .blue-alliance {
-    color: black;
+    color: white;
     padding: 5px;
     margin: 0px;
 }
@@ -143,8 +200,9 @@ body {
     background-color: blue;
 }
 
-.match.highlight {
+.match.highlight-current {
     border: 2px solid yellow;
+    background-color: #555;
 }
 
 #matchDetails {
@@ -153,18 +211,31 @@ body {
 
 #redAlliance, #blueAlliance {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    justify-content: space-around;
+}
+
+#redAlliance {
+    background-color: darkred;
+}
+
+#blueAlliance {
+    background-color: darkblue;
 }
 
 .team {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 10px;
+    width: 30%;
 }
 
 .team img {
-    width: 50px;
-    height: 50px;
+    width: 25vh;
+    height: 25vh;
     object-fit: cover;
 }

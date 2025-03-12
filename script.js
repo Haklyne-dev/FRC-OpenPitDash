@@ -161,7 +161,7 @@ $(document).ready(function() {
             streamUrl = data.video.replace(/^https?:\/\/www.twitch.tv\//, '');
             if (streamUrl) {
                 $('#streamContainer').html(`
-                    <iframe src="https://player.twitch.tv/?channel=${streamUrl}&parent=haklyne-dev.github.io" frameborder="0" allowfullscreen scrolling="yes" height="80%" width="95%"></iframe>
+                    <iframe src="https://player.twitch.tv/?channel=${streamUrl}&parent=haklyne-dev.github.io" frameborder="0" allowfullscreen scrolling="no" height="80%" width="95%"></iframe>
                 `);
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {

@@ -239,3 +239,19 @@ body {
     height: 25vh;
     object-fit: cover;
 }
+
+#streamContainer {
+    display: none;
+    position: fixed;
+    top: 50px;
+    left: 25%;
+    width: 75%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    padding: 20px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

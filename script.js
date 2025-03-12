@@ -158,10 +158,10 @@ $(document).ready(function() {
         var apiUrl = `https://api.statbotics.io/v3/event/${eventKey}`;
         
         $.getJSON(apiUrl, function(data) {
-            streamUrl = data.video;
+            streamUrl = data.video.replace(/^https?:\/\/www.twitch.tv\//, '');
             if (streamUrl) {
                 $('#streamContainer').html(`
-                    <iframe src="${streamUrl}&parent=haklyne-dev.github.io" frameborder="0" allowfullscreen="true" scrolling="yes" height="100%" width="100%"></iframe>
+                    <iframe src="https://player.twitch.tv/?channel=${streamUrl}&parent=haklyne-dev.github.io" frameborder="0" allowfullscreen scrolling="yes" height="auto" width="100%"></iframe>
                 `);
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {

@@ -8,6 +8,7 @@ $(document).ready(function() {
     var intervalId = null;
     var savedMatchData = {};
     var currentMatch = 'No upcoming match';
+    var streamUrl = null;
     
     console.log('Team number:', teamNumber);
     if (teamNumber) {
@@ -44,6 +45,7 @@ $(document).ready(function() {
         $('#eventname').text(eventName);
         setCookie('eventName', eventName, 365);
         fetchMatches(eventKey, nexusApiKey, teamNumber);
+        fetchStreamUrl(eventKey);
         scaleHeaderText();
         if (intervalId) {
             clearInterval(intervalId);
@@ -67,6 +69,11 @@ $(document).ready(function() {
         $('#settingsPage').hide();
     });
 
+    $('#stream').click(function() {
+        $('#streamContainer').toggle();
+        $('#details-container').toggle();
+    });
+
     function fetchTeamEvents(teamNumber, selectedEventName) {
         var currentYear = new Date().getFullYear();
         var apiUrl = `https://api.statbotics.io/v3/team_events?team=${teamNumber}&year=${currentYear}`;
@@ -81,6 +88,7 @@ $(document).ready(function() {
                     option.selected = true;
                     $('#eventname').text(event.event_name);
                     fetchMatches(event.event, nexusApiKey, teamNumber);
+                    fetchStreamUrl(event.event);
                 }
                 eventDropdown.append(option);
             });
@@ -143,6 +151,21 @@ $(document).ready(function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error fetching matches:', textStatus, errorThrown);
             }
+        });
+    }
+
+    function fetchStreamUrl(eventKey) {
+        var apiUrl = `https://api.statbotics.io/v3/event/${eventKey}`;
+        
+        $.getJSON(apiUrl, function(data) {
+            streamUrl = data.video;
+            if (streamUrl) {
+                $('#streamContainer').html(`
+                    <iframe src="${streamUrl}&parent=haklyne-dev.github.io" frameborder="0" allowfullscreen="true" scrolling="yes" height="100%" width="100%"></iframe>
+                `);
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching stream URL:', textStatus, errorThrown);
         });
     }
 

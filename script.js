@@ -9,8 +9,8 @@ $(document).ready(function() {
     var savedMatchData = {};
     var currentMatch = 'No upcoming match';
     var streamUrl = null;
-    
-    console.log('Team number:', teamNumber);
+    var alliances = [["none"],["none"],["none"],["none"],["none"],["none"],["none"],["none"]];
+
     if (teamNumber) {
         $('#teamNumberInput').val(teamNumber);
         $('#teamnum').text(teamNumber);
@@ -137,6 +137,10 @@ $(document).ready(function() {
                             firstMatch = match;
                         }
                     }
+                    if (match.label == 'Playoff 1') {alliances[0] = match.redTeams; alliances[7] = match.blueTeams;}
+                    else if (match.label == 'Playoff 2') {alliances[3] = match.redTeams; alliances[4] = match.blueTeams;}
+                    else if (match.label == 'Playoff 3') {alliances[1] = match.redTeams; alliances[6] = match.blueTeams;}
+                    else if (match.label == 'Playoff 4') {alliances[2] = match.redTeams; alliances[5] = match.blueTeams;}
                 });
                 if (!isQueuing && !isOnDeck) {
                     $('#alertContainer').hide();
@@ -190,6 +194,545 @@ $(document).ready(function() {
                 $(this).addClass('highlight-current');
             } else {
                 $(this).removeClass('highlight-current');
+            }
+        });
+
+        // Check if the next match is a playoff match
+        if (match.label.includes('Playoff') || match.label.includes('Final')) {
+            displayDoubleEliminationBracket();
+        }
+    }
+
+    function displayDoubleEliminationBracket() {
+        // Replace match details with double elimination bracket
+        console.log(alliances);
+        $('#details-container').html(`
+            <table id="alliances">
+                <tr>
+                    <td>Alliance 1</td>
+                    <td>Alliance 2</td>
+                    <td>Alliance 3</td>
+                    <td>Alliance 4</td>
+                    <td>Alliance 5</td>
+                    <td>Alliance 6</td>
+                    <td>Alliance 7</td>
+                    <td>Alliance 8</td>
+                </tr>
+                <tr>
+                    <td>${alliances[0].join(', ')}</td>
+                    <td>${alliances[1].join(', ')}</td>
+                    <td>${alliances[2].join(', ')}</td>
+                    <td>${alliances[3].join(', ')}</td>
+                    <td>${alliances[4].join(', ')}</td>
+                    <td>${alliances[5].join(', ')}</td>
+                    <td>${alliances[6].join(', ')}</td>
+                    <td>${alliances[7].join(', ')}</td>
+                </tr>
+            </table>
+            <div class="bracket">
+                <div class="round" id="playoff1">
+                    <table>
+                        <thead>Playoff 1</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Alliance 1</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Alliance 8</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <svg viewBox="0 0 10 10" id="line1">
+                    <line x1="0" y1="0" x2="5" y2="0" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="10" x2="10" y2="10" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff2">
+                    <table>
+                        <thead>Playoff 2</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Alliance 3</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Alliance 6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <svg viewBox="0 0 10 10" id="line2">
+                    <line x1="0" y1="10" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="10" x2="5" y2="0" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff3">
+                    <table>
+                        <thead>Playoff 3</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Alliance 2</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Alliance 7</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><svg viewBox="0 0 10 10" id="line3">
+                    <line x1="0" y1="0" x2="5" y2="0" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="10" x2="10" y2="10" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff4">
+                    <table>
+                        <thead>Playoff 4</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Alliance 4</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Alliance 5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><svg viewBox="0 0 10 10" id="line4">
+                    <line x1="0" y1="10" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff5">
+                    <table>
+                        <thead>Playoff 5</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Loser of M1</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Loser of M2</td>
+                            </tr>
+                    </table>
+                </div><svg viewBox="0 0 10 10" id="line5">
+                    <line x1="0" y1="10" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff6">
+                    <table>
+                        <thead>Playoff 6</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Loser of M3</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Loser of M4</td>
+                            </tr>
+                    </table>
+                </div><svg viewBox="0 0 10 10" id="line6">
+                    <line x1="0" y1="10" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff7">
+                    <table>
+                        <thead>Playoff 7</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Winner of M1</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M2</td>
+                            </tr>
+                    </table>
+                </div><svg viewBox="0 0 50 20" id="line7">
+                    <line x1="0" y1="0" x2="25" y2="0" stroke="black" stroke-width="0.5" />
+                    <line x1="25" y1="0" x2="25" y2="20" stroke="black" stroke-width="0.5" />
+                    <line x1="25" y1="20" x2="50" y2="20" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff8">
+                    <table>
+                        <thead>Playoff 8</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Winner of M3</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><svg viewBox="0 0 50 20" id="line8">
+                    <line x1="0" y1="20" x2="25" y2="20" stroke="black" stroke-width="0.5" />
+                    <line x1="25" y1="0" x2="25" y2="20" stroke="black" stroke-width="0.5" />
+                    <line x1="25" y1="0" x2="50" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff9">
+                    <table>
+                        <thead>Playoff 9</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Loser of M7</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><svg viewBox="0 0 10 10" id="line9">
+                    <line x1="0" y1="10" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff10">
+                    <table>
+                        <thead>Playoff 10</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Loser of M8</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><svg viewBox="0 0 10 10" id="line10">
+                    <line x1="0" y1="0" x2="5" y2="0" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="10" x2="10" y2="10" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff11">
+                    <table>
+                        <thead>Playoff 11</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Winner of M7</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M8</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><svg viewBox="0 0 50 30" id="line11">
+                    <line x1="0" y1="0" x2="45" y2="0" stroke="black" stroke-width="0.5" />
+                    <line x1="45" y1="0" x2="45" y2="30" stroke="black" stroke-width="0.5" />
+                    <line x1="45" y1="30" x2="50" y2="30" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff12">
+                    <table>
+                        <thead>Playoff 12</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Winner of M10</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M9</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><svg viewBox="0 0 10 5" id="line12">
+                    <line x1="0" y1="5" x2="5" y2="5" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="5" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="playoff13">
+                    <table>
+                        <thead>Playoff 13</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Loser of M11</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M12</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <svg viewBox="0 0 10 30" id="line13">
+                    <line x1="0" y1="30" x2="5" y2="30" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="5" y2="30" stroke="black" stroke-width="0.5" />
+                    <line x1="5" y1="0" x2="10" y2="0" stroke="black" stroke-width="0.5" />
+                </svg>
+                <div class="round" id="final1">
+                    <table>
+                        <thead>Finals</thead>
+                        <tbody>
+                            <tr class="red">
+                                <td>Winner of M11</td>
+                            </tr>
+                            <tr class="blue">
+                                <td>Winner of M13</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `);
+        $('#alliances').css({
+            'position': 'absolute',
+            'width': '70vw',
+            'height': '50px',
+            'border-collapse': 'collapse',
+            'top': '60px',
+            'left': '28vw',
+        });
+        $('#alliances td').css({
+            'width': '12.5vw',
+            'border': '1px solid #ccc',
+            'padding': '5px',
+            'text-align': 'center',
+            'font-size': '2vh'
+        });
+        $('.bracket').css({
+            'display': 'flex',
+            'justify-content': 'space-around',
+            'align-items': 'center',
+            'margin-top': '20px'
+        });
+        $('.round').css({
+            'width': '9vw',
+            'margin': '0 10px',
+            'background-color': '#f9f9f9',
+            'color': 'black',
+            'font-size': 'fit-content'
+        });
+        $('.round table').css({
+            'width': '100%',
+            'border-collapse': 'collapse'
+        });
+        $('.round table thead').css({
+            'background-color': '#ccc',
+            'color': 'black',
+            'font-weight': 'bold',
+            'text-align': 'center'
+        });
+        $('.round table tbody').css({
+            'border': '1px solid #ccc'
+        });
+        $('.round table tr').css({
+            'height': '20px'
+        });
+        $('.round table td').css({
+            'text-align': 'center'
+        });
+        $('.round table tr.red').css({
+            'background-color': 'red',
+            'color': 'white'
+        });
+        $('.round table tr.blue').css({
+            'background-color': 'blue',
+            'color': 'white'
+        });
+
+        $('#playoff1').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(0, 0)'
+        });
+        $('#playoff2').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(0, 80px)'
+        });
+        $('#playoff3').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(0, 160px)'
+        });
+        $('#playoff4').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(0, 240px)'
+        });
+        $('#playoff5').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(12vw, 360px)'
+        });
+        $('#playoff6').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(12vw, 440px)'
+        });
+        $('#playoff7').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(12vw, 40px)'
+        });
+        $('#playoff8').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(12vw, 200px)'
+        });
+        $('#playoff9').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(24vw, 400px)'
+        });
+        $('#playoff10').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(24vw, 320px)'
+        });
+        $('#playoff11').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(36vw, 120px)'
+        });
+        $('#playoff12').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(36vw, 360px)'
+        });
+        $('#playoff13').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(48vw, 340px)'
+        });
+        $('#final1').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26%',
+            'transform': 'translate(60vw, 240px)'
+        });
+
+        $('#line1').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(10vw, 40px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line2').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(10vw, 80px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line3').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(10vw, 200px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line4').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(10vw, 240px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line5').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(22vw, 360px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line6').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(22vw, 440px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line7').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(22vw, 80px)',
+            'width': '15vw',
+            'height': '80px'
+        });
+        $('#line8').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(22vw, 160px)',
+            'width': '15vw',
+            'height': '80px'
+        });
+        $('#line9').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(34vw, 400px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line10').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(34vw, 360px)',
+            'width': '3vw',
+            'height': '40px'
+        });
+        $('#line11').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(46vw, 160px)',
+            'width': '15vw',
+            'height': '120px'
+        });
+        $('#line12').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(46vw, 380px)',
+            'width': '3vw',
+            'height': '20px'
+        });
+        $('#line13').css({
+            'position': 'absolute',
+            'top': '150px',
+            'left': '26vw',
+            'transform': 'translate(58vw, 280px)',
+            'width': '3vw',
+            'height': '100px'
+        });
+
+        const allianceNames = ["Alliance 1", "Alliance 2", "Alliance 3", "Alliance 4", "Alliance 5", "Alliance 6", "Alliance 7", "Alliance 8"];
+        const matchLabels = ["Playoff 5", "Playoff 6", "Playoff 7", "Playoff 8", "Playoff 9", "Playoff 10", "Playoff 11", "Playoff 12", "Playoff 13", "Final 1"];
+        
+        data.matches.forEach(function(match) {
+            if (matchLabels.includes(match.label)) {
+            let redAlliance = "Undetermined";
+            let blueAlliance = "Undetermined";
+            
+            alliances.forEach((alliance, index) => {
+                if (match.redTeams === alliance) redAlliance = allianceNames[index];
+                if (match.blueTeams === alliance) blueAlliance = allianceNames[index];
+            });
+            
+            $(`#${match.label.toLowerCase().replace(' ', '')} tbody`).html(
+                `<tr class="red">
+                <td>${redAlliance}</td>
+                </tr>
+                <tr class="blue">
+                <td>${blueAlliance}</td>
+                </tr>`
+            );
             }
         });
     }

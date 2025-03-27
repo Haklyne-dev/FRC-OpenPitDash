@@ -114,12 +114,17 @@ $(document).ready(function() {
                 var isOnDeck = false;
                 var firstMatch = null;
                 data.matches.forEach(function(match) {
-                    var matchItem = $('<li class="match"></li>');
+                    var mxx = $('<li></li>');
+                    var matchItem = $('<div class="matchwrapper match"></div>');
                     if (match.redTeams.includes(teamNumber) || match.blueTeams.includes(teamNumber)) {
                         matchItem.append(`<h3>${match.label}</h3>`);
+                        const d = new Date();
+                        let time = d.getTime();
+                        if(match.times.estimatedQueueTime - time>0){matchItem.append(`<div class="queue-time"><p>Queueing: ~${Math.round((match.times.estimatedQueueTime - time)/60000)}min</p></div>`);}
                         matchItem.append(`<p class="red-alliance">${match.redTeams.join(', ')}</p>`);
                         matchItem.append(`<p class="blue-alliance">${match.blueTeams.join(', ')}</p>`);
-                        matchesList.append(matchItem);
+                        mxx.append(matchItem);
+                        matchesList.append(mxx);
                         if (match.status === "Now queuing") {
                             $('#alertContainer').removeClass('on-deck').text(`Now Queuing ${match.label}`).show();
                             $('body').css('padding-top', '40px');

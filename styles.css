@@ -275,3 +275,14 @@ body {
 a {
     color: #1AF;
 }
+
+.queue-time {
+    font-size: 0.8em;
+    margin-top: 40px;
+    margin-left: 5px;
+    position: absolute;
+}
+
+.matchwrapper {
+   position: relative;
+}
